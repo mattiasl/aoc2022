@@ -4,26 +4,26 @@
 
 (def rucksacks (split (slurp "./src/main/clojure/input/day03.in") #"\n"))
 
-(defn score [c]
-  (- (int c) (if (#(Character/isUpperCase %) c) 38 96)))
+(defn priority [item]
+  (- (int item) (if (#(Character/isUpperCase %) item) 38 96)))
 
-(defn scores [groups]
+(defn get-common-char [groups]
   (->> (map set groups)
        (apply intersection)
-       (first)
-       (score)))
+       (first)))                                            ; assume only one common
 
 (defn split-into-compartments [rucksack]
   (partition (/ (count rucksack) 2) rucksack))
 
-(defn solve [groups]
-  (->> (map scores groups)
+(defn priorities [groups]
+  (->> (map get-common-char groups)
+       (map priority)
        (apply +)))
 
 (defn part-1 [rucksacks]
-  (solve (map split-into-compartments rucksacks)))
+  (priorities (map split-into-compartments rucksacks)))
 
 (defn part-2 [rucksacks]
-  (solve (partition 3 rucksacks)))
+  (priorities (partition 3 rucksacks)))
 
 ((juxt part-1 part-2) rucksacks)
