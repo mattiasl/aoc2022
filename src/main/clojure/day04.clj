@@ -9,9 +9,8 @@
 (defn overlaps? [[a b c d]]
   (and (<= a d) (<= c b)))
 
-(defn parse-assignment [pair]
-  (->> (re-matches #"(\d+)-(\d+),(\d+)-(\d+)" pair)
-       (rest)
+(defn parse-assignment [assignment]
+  (->> (split assignment #"\D")
        (map #(Integer/parseInt %))))
 
 (defn solve [assignments fn?]
