@@ -3,27 +3,17 @@
 
 (def input (split (slurp "./src/main/clojure/input/day05.in") #"\n\n"))
 
-(defn crates-by-index [row]
-  (map-indexed (fn [i x] [(inc i) x]) (take-nth 4 (rest row))))
+(defn transpose [m]
+  (apply mapv vector m))
 
-(defn make-empty-stacks [indexes]
-  (->> (re-seq #"[\d]+" indexes)
-       (map #(Integer/parseInt %))
-       (reduce (fn [a c] (assoc a c [])) (sorted-map))))
-
-(defn add-crates [stacks crates]
-  (reduce (fn [acc [i crate]]
-            (if (= crate \ )
-              acc
-              (assoc acc i (conj (acc i) crate))))
-          stacks crates))
-
-(defn make-stacks [initial-state]
-  (let [instr (split initial-state #"\n")]
-    (->> (butlast instr)
-         (reverse)
-         (map crates-by-index)
-         (reduce add-crates (make-empty-stacks (last instr))))))
+(defn init-stacks [initial-state]
+  (->> (split initial-state #"\n")
+       (transpose)
+       (map reverse)
+       (map clojure.string/join)
+       (map clojure.string/trim)
+       (filter #(re-matches #"\d+[A-Z]+" %))
+       (reduce (fn [a c] (assoc a (Character/digit (first c) 10) (rest c))) (sorted-map))))
 
 (defn parse-procedures [procedures]
   (->> (split procedures #"\n")
@@ -39,7 +29,7 @@
 
 (defn run-procedure [[stacks procedures] fn]
   (let [procedure (make-procedure fn)]
-    (->> (reduce procedure (make-stacks stacks) (parse-procedures procedures))
+    (->> (reduce procedure (init-stacks stacks) (parse-procedures procedures))
          (vals)
          (map last)
          (clojure.string/join))))
