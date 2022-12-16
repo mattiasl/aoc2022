@@ -70,6 +70,7 @@
          (count)
          (dec))))
 
+; TODO run from E to S and search for first a instead of testing all combinations and selecting the shortest one
 (defn part-2 [input]
   (let [grid (input->grid input)
         [S E] (pos-by-height grid [\S \E])
@@ -87,5 +88,7 @@
          (apply min)
          (dec))))
 
-(part-1 input)
-(part-2 input)
+(comment
+  (part-1 input)
+  (part-2 input)
+  )
